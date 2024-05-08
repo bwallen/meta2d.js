@@ -553,8 +553,9 @@ export class Meta2d {
     if (network.protocol === 'http') {
       if (typeof network.headers === 'object') {
         for (let i in network.headers) {
-          let keys = network.headers[i].match(/(?<=\$\{).*?(?=\})/g);
+          let keys = network.headers[i].match(/\$\{([^}]*)\}/g);
           if (keys) {
+            keys[0] =  keys[0].replace(/\$\{([^}]*)\}/g, '$1')
             network.headers[i] = network.headers[i].replace(
               `\${${keys[0]}}`,
               this.getDynamicParam(keys[0])
@@ -1046,7 +1047,7 @@ export class Meta2d {
     sessionStorage.removeItem('page');
     this.store.clipboard = undefined;
 
-  
+
     if (!this.store.sameTemplate) {
       this.canvas.canvasTemplate.bgPatchFlags = true;
     }
@@ -2040,7 +2041,7 @@ export class Meta2d {
     if( enable ){
       this.updateTimer = setInterval(() => {
         //模拟数据
-      
+
         this.store.data.pens.forEach((pen) => {
           this.penMock(pen);
         });
@@ -2065,8 +2066,9 @@ export class Meta2d {
       if (typeof req.headers === 'object') {
         for (let i in req.headers) {
           if(typeof req.headers[i] === 'string'){
-            let keys = req.headers[i].match(/(?<=\$\{).*?(?=\})/g);
+            let keys = req.headers[i].match(/\$\{([^}]*)\}/g);
             if (keys) {
+              keys[0] =  keys[0].replace(/\$\{([^}]*)\}/g, '$1')
               req.headers[i] = req.headers[i].replace(
                 `\${${keys[0]}}`,
                 this.getDynamicParam(keys[0])
@@ -2078,8 +2080,9 @@ export class Meta2d {
       if (typeof req.body === 'object') {
         for (let i in req.body) {
           if(typeof req.body[i] === 'string'){
-            let keys = req.body[i].match(/(?<=\$\{).*?(?=\})/g);
+            let keys = req.body[i].match(/\$\{([^}]*)\}/g);
             if (keys) {
+              keys[0] =  keys[0].replace(/\$\{([^}]*)\}/g, '$1')
               req.body[i] = req.body[i].replace(
                 `\${${keys[0]}}`,
                 this.getDynamicParam(keys[0])
@@ -2594,7 +2597,7 @@ export class Meta2d {
         }
       }
     });
-    
+
     //所有的条件判断后，再统一执行条件成立的事件
     if(old){
       pen.events?.forEach((event,index) => {
@@ -2613,7 +2616,7 @@ export class Meta2d {
         }
       });
     }
-    
+
     if(eventName === 'valueUpdate'){
       pen.realTimes?.forEach((realTime) => {
         let indexArr = [];
